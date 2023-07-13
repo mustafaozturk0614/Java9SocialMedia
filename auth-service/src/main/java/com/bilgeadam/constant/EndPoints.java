@@ -5,11 +5,12 @@ public class EndPoints {
     public static  final String AUTH=VERSION+ "/auth";
 
     //Genel
-
-
+    public static final String FINDALL="/findall";
+    public static final String DELETEBYID="/deletebyid/{id}";
     // Auth
     public static final String REGISTER="/register";
     public static final String LOGIN="/login";
+    public static final String ACTIVATION="/activation";
 
 
 }

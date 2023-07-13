@@ -4,7 +4,8 @@ ext{
             lombok: "1.18.28",
             mapStruct: "1.5.5.Final",
             postgresql: "42.6.0",
-            openApi: "1.7.0"
+            openApi: "1.7.0",
+            jwt: "4.4.0",
 
     ]
 
@@ -16,7 +17,8 @@ ext{
         mapStruct: "org.mapstruct:mapstruct:$versions.mapStruct",
         mapStructProcessor: "org.mapstruct:mapstruct-processor:$versions.mapStruct",
         lombok:  "org.projectlombok:lombok:$versions.lombok",
-        openApi: "org.springdoc:springdoc-openapi-ui:$versions.openApi"
+        openApi: "org.springdoc:springdoc-openapi-ui:$versions.openApi",
+        javaJwt: "com.auth0:java-jwt:$versions.jwt",
 
     ]
 

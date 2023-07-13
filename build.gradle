@@ -45,6 +45,7 @@ allprojects {
         implementation libs.mapStruct
         annotationProcessor libs.mapStructProcessor
         implementation libs.openApi
+        implementation libs.javaJwt
     }
 
 }
