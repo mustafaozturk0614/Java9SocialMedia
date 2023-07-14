@@ -6,6 +6,7 @@ ext{
             postgresql: "42.6.0",
             openApi: "1.7.0",
             jwt: "4.4.0",
+            springCloud: "3.1.8"
 
     ]
 
@@ -19,6 +20,7 @@ ext{
         lombok:  "org.projectlombok:lombok:$versions.lombok",
         openApi: "org.springdoc:springdoc-openapi-ui:$versions.openApi",
         javaJwt: "com.auth0:java-jwt:$versions.jwt",
+        springCloudOpenFeign: "org.springframework.cloud:spring-cloud-starter-openfeign:$versions.springCloud"
 
     ]
 

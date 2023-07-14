@@ -2,16 +2,14 @@ package com.bilgeadam.constant;
 
 public class EndPoints {
     public static final String VERSION="api/v1";
-    public static  final String AUTH=VERSION+ "/auth";
+    public static  final String USER=VERSION+ "/user";
 
     //Genel
     public static final String FINDALL="/findall";
     public static final String DELETEBYID="/deletebyid/{id}";
 
     public static final String SAVE="/save";
-    // Auth
-    public static final String REGISTER="/register";
-    public static final String LOGIN="/login";
+    // USER
     public static final String ACTIVATION="/activation";
 
 

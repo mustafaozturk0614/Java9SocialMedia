@@ -12,6 +12,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
-
+jwt:
+  secretKey: ${java9secretkey}
+  issuer:  ${java9issuer}
+  audience: ${java9audience}
 
 

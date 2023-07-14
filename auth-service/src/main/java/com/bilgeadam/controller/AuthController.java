@@ -4,6 +4,7 @@ import com.bilgeadam.dto.request.ActivationRequestDto;
 import com.bilgeadam.dto.request.LoginRequestDto;
 import com.bilgeadam.dto.request.RegisterRequestDto;
 import com.bilgeadam.dto.response.LoginResponseDto;
+import com.bilgeadam.dto.response.RegisterResponseDto;
 import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.service.AuthService;
 import com.bilgeadam.utility.JwtTokenManager;
@@ -27,7 +28,7 @@ public class AuthController {
     private final JwtTokenManager jwtTokenManager;
 
     @PostMapping(REGISTER)
-    public ResponseEntity<Auth> register(@RequestBody @Valid RegisterRequestDto dto){
+    public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto){
         return  ResponseEntity.ok(authService.register(dto));
     }
 

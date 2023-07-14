@@ -3,9 +3,10 @@ package com.bilgeadam.service;
 import com.bilgeadam.dto.request.ActivationRequestDto;
 import com.bilgeadam.dto.request.LoginRequestDto;
 import com.bilgeadam.dto.request.RegisterRequestDto;
-import com.bilgeadam.dto.response.LoginResponseDto;
+import com.bilgeadam.dto.response.RegisterResponseDto;
 import com.bilgeadam.excepiton.AuthManagerException;
 import com.bilgeadam.excepiton.ErrorType;
+import com.bilgeadam.manager.IUserManager;
 import com.bilgeadam.mapper.IAuthMapper;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
@@ -15,6 +16,7 @@ import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -23,26 +25,35 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
     private final IAuthRepository authRepository;
     private final JwtTokenManager jwtTokenManager;
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager) {
+
+    private final IUserManager userManager;
+
+
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
+        this.userManager = userManager;
     }
-
-    public Auth register(RegisterRequestDto dto) {
+    @Transactional
+    public RegisterResponseDto register(RegisterRequestDto dto) {
         Auth auth= IAuthMapper.INSTANCE.toAuth(dto);
         auth.setActivationCode(CodeGenerator.genarateCode());
 //    if (authRepository.existsByUsername(dto.getUsername())){
 //        throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
 //    }
         try {
-            return  save(auth);
+            save(auth);
+        //TODO bir manager paketi içinde bir interface e metot yazılacak
+            // ve yazılan metot uzerinden user servie ile iteşime geçilecek
+            userManager.createNewUser(IAuthMapper.INSTANCE.toUserSaveRequestDto(auth));
+            return  IAuthMapper.INSTANCE.toRegisterResponseDto(auth);
         } catch (DataIntegrityViolationException e){
             throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
         }catch (Exception ex){
+         //   delete(auth);
             throw  new AuthManagerException(ErrorType.USER_NOT_CREATED);
         }
-
     }
 
     public String login(LoginRequestDto dto) {
@@ -60,7 +71,7 @@ public class AuthService extends ServiceManager<Auth,Long> {
 //        return IAuthMapper.INSTANCE.toLoginResponseDto(auth.get());
           return  token.get();
     }
-
+    @Transactional
     public String activateStatus(ActivationRequestDto dto) {
         Optional<Auth> auth=findById(dto.getId());
         if (auth.isEmpty()){
@@ -82,6 +93,7 @@ public class AuthService extends ServiceManager<Auth,Long> {
             case PENDING,INACTIVE ->{
                 auth.setStatus(EStatus.ACTIVE);
                 update(auth);
+                userManager.activateUser(auth.getId());
                 return "Hesabınız aktif edilmiştir";
             }
             case BANNED -> {

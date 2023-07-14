@@ -46,6 +46,7 @@ allprojects {
         annotationProcessor libs.mapStructProcessor
         implementation libs.openApi
         implementation libs.javaJwt
+        implementation libs.springCloudOpenFeign
     }
 
 }
