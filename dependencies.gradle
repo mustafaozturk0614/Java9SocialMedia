@@ -20,7 +20,10 @@ ext{
         lombok:  "org.projectlombok:lombok:$versions.lombok",
         openApi: "org.springdoc:springdoc-openapi-ui:$versions.openApi",
         javaJwt: "com.auth0:java-jwt:$versions.jwt",
-        springCloudOpenFeign: "org.springframework.cloud:spring-cloud-starter-openfeign:$versions.springCloud"
+        springCloudOpenFeign: "org.springframework.cloud:spring-cloud-starter-openfeign:$versions.springCloud",
+        springCloudConfigStarter: "org.springframework.cloud:spring-cloud-starter-config:$versions.springCloud",
+        springCloudConfigClient: "org.springframework.cloud:spring-cloud-config-client:$versions.springCloud",
+        springCloudConfigServer: "org.springframework.cloud:spring-cloud-config-server:$versions.springCloud",
 
     ]
 

@@ -65,9 +65,10 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
                 !userProfile.get().getUsername().equals(dto.getUsername())){
             userProfile.get().setEmail(dto.getEmail());
             userProfile.get().setUsername(dto.getUsername());
-
+            // auth-microserivceine ulaştıgımız istek attığımız kısım
             authManager.update(IUserMapper.INSTANCE.toUpdateRequestDto(userProfile.get()));
         }
+
         userProfile.get().setAvatar(dto.getAvatar());
         userProfile.get().setAbout(dto.getAbout());
         userProfile.get().setPhone(dto.getPhone());

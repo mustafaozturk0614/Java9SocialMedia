@@ -1,0 +1,22 @@
+server:
+  port: 7071
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: root
+    url: jdbc:postgresql://localhost:5959/authDb
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  secretKey: ${java9secretkey}
+  issuer:  ${java9issuer}
+  audience: ${java9audience}
+
+
+
+

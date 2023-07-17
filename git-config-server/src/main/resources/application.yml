@@ -1,0 +1,14 @@
+server:
+  port: 8889
+spring:
+  application:
+    name: config-server-git
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${java9configuri}
+          default-label: master
+          skip-ssl-validation: true
+          username: ${java9gitconfigusername}
+          password: ${java9gitconfigpassword}

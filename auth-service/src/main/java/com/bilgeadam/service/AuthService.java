@@ -125,20 +125,15 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
     public String updateAuth(UpdateRequestDto dto) {
         Optional<Auth> auth=findById(dto.getId());
-
         if (auth.isEmpty()){
             throw  new AuthManagerException((ErrorType.USER_NOT_FOUND));
         }
-
-        if(authRepository.existsByUsername(dto.getUsername())){
+        if(!auth.get().getUsername().equals(dto.getUsername()) && authRepository.existsByUsername(dto.getUsername())){
             throw new AuthManagerException(ErrorType.USERNAME_EXIST);
         }
-
             auth.get().setUsername(dto.getUsername());
             auth.get().setEmail(dto.getEmail());
             update(auth.get());
-
-
 
         return "Guncelleme Başarılı ....";
     }

@@ -1,20 +1,8 @@
-server:
-  port: 7072
-
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: root
-    url: jdbc:postgresql://localhost:5959/userDb
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-jwt:
-  secretKey: ${java9secretkey}
-  issuer:  ${java9issuer}
-  audience: ${java9audience}
-
-
+  cloud:
+    config:
+      uri: http://localhost:8889
+  config:
+    import: "configserver:"
+  application:
+    name: user-service-application
