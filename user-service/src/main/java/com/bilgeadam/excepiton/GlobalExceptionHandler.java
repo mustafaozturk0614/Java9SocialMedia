@@ -21,7 +21,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex){
         return ResponseEntity.badRequest().body("beklenmeyen bir hata olustu: " + ex.getMessage());
     }
-
+    @ExceptionHandler(AuthManagerException.class)
+    public ResponseEntity<String> handleAuthMAnagerException(AuthManagerException ex){
+        return ResponseEntity.badRequest().body("auth microservice hatası: " + ex.getMessage());
+    }
     @ExceptionHandler(UserManagerException.class)
     public ResponseEntity<ErrorMessage> handleMovieAppException(UserManagerException ex){
         ErrorType errorType=ex.getErrorType();

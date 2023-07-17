@@ -9,6 +9,8 @@ public class EndPoints {
     public static final String DELETEBYID="/deletebyid/{id}";
 
     public static final String SAVE="/save";
+    public static final String UPDATE="/update";
+
     // USER
     public static final String ACTIVATION="/activation";
 

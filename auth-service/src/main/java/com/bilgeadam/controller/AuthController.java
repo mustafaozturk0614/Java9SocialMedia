@@ -3,6 +3,7 @@ package com.bilgeadam.controller;
 import com.bilgeadam.dto.request.ActivationRequestDto;
 import com.bilgeadam.dto.request.LoginRequestDto;
 import com.bilgeadam.dto.request.RegisterRequestDto;
+import com.bilgeadam.dto.request.UpdateRequestDto;
 import com.bilgeadam.dto.response.LoginResponseDto;
 import com.bilgeadam.dto.response.RegisterResponseDto;
 import com.bilgeadam.repository.entity.Auth;
@@ -62,4 +63,10 @@ public class AuthController {
     public  ResponseEntity<String> getRoleFromToken(String token){
         return  ResponseEntity.ok(jwtTokenManager.getRoleFromToken(token).get());
     }
+    @PutMapping(UPDATE)
+    public  ResponseEntity<String> update(@RequestBody UpdateRequestDto dto){
+
+        return  ResponseEntity.ok(authService.updateAuth(dto));
+    }
+
 }

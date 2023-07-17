@@ -1,11 +1,14 @@
 package com.bilgeadam.controller;
 
+import com.bilgeadam.dto.request.UserProfileUpdateRequestDto;
 import com.bilgeadam.dto.request.UserSaveRequestDto;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import  static  com.bilgeadam.constant.EndPoints.*;
 
@@ -16,7 +19,6 @@ import  static  com.bilgeadam.constant.EndPoints.*;
     auth 'u guncellesin
     eger değişmemis ise auth service e istek atmaya gerek yoktur sadece user profile
     da guncelleme yapsın
-
  */
 @RequiredArgsConstructor
 @RestController
@@ -40,4 +42,10 @@ public class UserProfileController {
     public  ResponseEntity<String> activateUser2(@RequestParam Long authId){
         return  ResponseEntity.ok(userProfileService.acivateUser(authId));
     }
+
+    @PutMapping(UPDATE)
+    public ResponseEntity<String> update(@RequestBody @Valid UserProfileUpdateRequestDto dto){
+        return  ResponseEntity.ok(userProfileService.updateUserProfile(dto));
+    }
+
 }

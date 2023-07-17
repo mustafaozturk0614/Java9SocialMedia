@@ -1,15 +1,18 @@
 package com.bilgeadam.service;
 
+import com.bilgeadam.dto.request.UserProfileUpdateRequestDto;
 import com.bilgeadam.dto.request.UserSaveRequestDto;
 import com.bilgeadam.excepiton.ErrorType;
 import com.bilgeadam.excepiton.UserManagerException;
+import com.bilgeadam.manager.IAuthManager;
 import com.bilgeadam.mapper.IUserMapper;
 import com.bilgeadam.repository.IUserProfileRepository;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
+import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,10 +20,15 @@ import java.util.Optional;
 public class UserProfileService  extends ServiceManager<UserProfile,Long> {
 
     private final IUserProfileRepository userProfileRepository;
+    private  final JwtTokenManager jwtTokenManager;
 
-    public UserProfileService( IUserProfileRepository userProfileRepository) {
+    private final IAuthManager authManager;
+
+    public UserProfileService(IUserProfileRepository userProfileRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager) {
         super(userProfileRepository);
         this.userProfileRepository = userProfileRepository;
+        this.jwtTokenManager = jwtTokenManager;
+        this.authManager = authManager;
     }
 
     public  Boolean createNewUser(UserSaveRequestDto dto){
@@ -41,5 +49,31 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
         userProfile.get().setStatus(EStatus.ACTIVE);
         update(userProfile.get());
         return  "Hesap başarıyla aktive edilmiştir";
+    }
+
+     @Transactional
+    public String updateUserProfile(UserProfileUpdateRequestDto dto) {
+        Optional<Long> authId=jwtTokenManager.getIdFromToken(dto.getToken());
+        if (authId.isEmpty()){
+            throw  new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<UserProfile> userProfile=userProfileRepository.findByAuthId(authId.get());
+        if (userProfile.isEmpty()){
+            throw  new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        if (!userProfile.get().getEmail().equals(dto.getEmail())||
+                !userProfile.get().getUsername().equals(dto.getUsername())){
+            userProfile.get().setEmail(dto.getEmail());
+            userProfile.get().setUsername(dto.getUsername());
+
+            authManager.update(IUserMapper.INSTANCE.toUpdateRequestDto(userProfile.get()));
+        }
+        userProfile.get().setAvatar(dto.getAvatar());
+        userProfile.get().setAbout(dto.getAbout());
+        userProfile.get().setPhone(dto.getPhone());
+        userProfile.get().setAddress(dto.getAddress());
+            update(userProfile.get());
+            return "Guncelleme başarılı";
+
     }
 }
