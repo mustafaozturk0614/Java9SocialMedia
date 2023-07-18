@@ -6,6 +6,7 @@ import com.bilgeadam.excepiton.ErrorType;
 import com.bilgeadam.excepiton.UserManagerException;
 import com.bilgeadam.manager.IAuthManager;
 import com.bilgeadam.mapper.IUserMapper;
+import com.bilgeadam.rabbitmq.model.RegisterModel;
 import com.bilgeadam.repository.IUserProfileRepository;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
@@ -76,5 +77,14 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
             update(userProfile.get());
             return "Guncelleme başarılı";
 
+    }
+
+    public Boolean createNewUserWithRabbitmq(RegisterModel registerModel) {
+        try {
+            save(IUserMapper.INSTANCE.toUserProfile(registerModel));
+            return  true;
+        }catch (Exception e){
+            throw  new UserManagerException(ErrorType.USER_NOT_CREATED);
+        }
     }
 }

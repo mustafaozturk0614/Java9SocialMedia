@@ -4,11 +4,14 @@ import com.bilgeadam.dto.request.UserProfileUpdateRequestDto;
 import com.bilgeadam.dto.request.UserSaveRequestDto;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.service.UserProfileService;
+import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.util.List;
 
 import  static  com.bilgeadam.constant.EndPoints.*;
 
@@ -46,6 +49,12 @@ public class UserProfileController {
     @PutMapping(UPDATE)
     public ResponseEntity<String> update(@RequestBody @Valid UserProfileUpdateRequestDto dto){
         return  ResponseEntity.ok(userProfileService.updateUserProfile(dto));
+    }
+
+
+    @GetMapping(FINDALL)
+    public ResponseEntity<List<UserProfile>> findAll(){
+        return ResponseEntity.ok(userProfileService.findAll());
     }
 
 }

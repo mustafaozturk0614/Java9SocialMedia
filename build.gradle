@@ -47,6 +47,9 @@ allprojects {
         implementation libs.openApi
         implementation libs.javaJwt
         implementation libs.springCloudOpenFeign
+        implementation libs.springCloudZipkin
+        implementation libs.springCloudSleuth
+        implementation libs.springBootRabbitMq
     }
 
 }

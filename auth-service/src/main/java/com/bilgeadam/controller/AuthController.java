@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.util.List;
+
 import  static  com.bilgeadam.constant.EndPoints.*;
 /*
     register --> gerekli sınıflarıda olusturalım
@@ -32,7 +34,10 @@ public class AuthController {
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto){
         return  ResponseEntity.ok(authService.register(dto));
     }
-
+    @PostMapping(REGISTER+"withrabbitmq")
+    public ResponseEntity<RegisterResponseDto> registerWithRabbitMq(@RequestBody @Valid RegisterRequestDto dto){
+        return  ResponseEntity.ok(authService.registerWithRabbitmq(dto));
+    }
     @PostMapping(LOGIN)
      public  ResponseEntity<String> login(@RequestBody LoginRequestDto dto ){
 
@@ -67,6 +72,12 @@ public class AuthController {
     public  ResponseEntity<String> update(@RequestBody UpdateRequestDto dto){
 
         return  ResponseEntity.ok(authService.updateAuth(dto));
+    }
+
+    @GetMapping(FINDALL)
+    public ResponseEntity<List<Auth>> findAll(){
+
+        return  ResponseEntity.ok(authService.findAll());
     }
 
 }

@@ -9,6 +9,7 @@ import com.bilgeadam.excepiton.AuthManagerException;
 import com.bilgeadam.excepiton.ErrorType;
 import com.bilgeadam.manager.IUserManager;
 import com.bilgeadam.mapper.IAuthMapper;
+import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.repository.enums.EStatus;
@@ -29,12 +30,15 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
     private final IUserManager userManager;
 
+    private final RegisterProducer registerProducer;
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager) {
+
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userManager = userManager;
+        this.registerProducer = registerProducer;
     }
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto dto) {
@@ -56,6 +60,30 @@ public class AuthService extends ServiceManager<Auth,Long> {
             throw  new AuthManagerException(ErrorType.USER_NOT_CREATED);
         }
     }
+
+
+    public RegisterResponseDto registerWithRabbitmq(RegisterRequestDto dto) {
+        Auth auth= IAuthMapper.INSTANCE.toAuth(dto);
+        auth.setActivationCode(CodeGenerator.genarateCode());
+
+        try {
+            save(auth);
+            // rabbit mq uzrerinden veri aktarcagız
+              registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
+            return  IAuthMapper.INSTANCE.toRegisterResponseDto(auth);
+        } catch (DataIntegrityViolationException e){
+            throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
+        }catch (Exception ex){
+            //   delete(auth);
+            throw  new AuthManagerException(ErrorType.USER_NOT_CREATED);
+        }
+    }
+
+
+
+
+
+
 
     public String login(LoginRequestDto dto) {
         Optional<Auth> auth=authRepository.findOptionalByUsernameAndPassword(dto.getUsername(), dto.getPassword());
