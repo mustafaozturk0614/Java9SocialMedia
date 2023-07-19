@@ -1,5 +1,6 @@
 package com.bilgeadam.service;
 
+import com.bilgeadam.rabbitmq.model.MailModel;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,12 +14,12 @@ public class MailSenderService {
     private final JavaMailSender javaMailSender;
 
 
-    public void sendMail(String content){
+    public void sendMail(MailModel model){
         SimpleMailMessage mailMessage=new SimpleMailMessage();
         mailMessage.setFrom("${java9mail}");
-        mailMessage.setTo("java5and6mo@gmail.com");
+        mailMessage.setTo(model.getEmail());
         mailMessage.setSubject("AKTİVASYON KODUNUZ....");
-        mailMessage.setText("code: "+content);
+        mailMessage.setText("code: "+ model.getActivationCode());
         javaMailSender.send(mailMessage);
     }
 

@@ -10,6 +10,7 @@ import com.bilgeadam.excepiton.ErrorType;
 import com.bilgeadam.manager.IUserManager;
 import com.bilgeadam.mapper.IAuthMapper;
 import com.bilgeadam.rabbitmq.producer.ActivationProducer;
+import com.bilgeadam.rabbitmq.producer.MailProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
@@ -33,15 +34,17 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
     private final RegisterProducer registerProducer;
     private final ActivationProducer activationProducer;
+    private final MailProducer mailProducer;
 
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer, MailProducer mailProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userManager = userManager;
         this.registerProducer = registerProducer;
         this.activationProducer = activationProducer;
+        this.mailProducer = mailProducer;
     }
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto dto) {
@@ -72,7 +75,9 @@ public class AuthService extends ServiceManager<Auth,Long> {
         try {
             save(auth);
             // rabbit mq uzrerinden veri aktarcagız
-              registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
+
+            mailProducer.sendMail(IAuthMapper.INSTANCE.toMailModel(auth));
+            registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
             return  IAuthMapper.INSTANCE.toRegisterResponseDto(auth);
         } catch (DataIntegrityViolationException e){
             throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
