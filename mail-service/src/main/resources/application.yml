@@ -1,0 +1,16 @@
+server:
+  port: 7075
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${java9mail}
+    password: ${java9mailpassword}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+

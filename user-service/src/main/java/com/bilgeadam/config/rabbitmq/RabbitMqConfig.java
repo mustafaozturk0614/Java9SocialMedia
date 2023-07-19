@@ -14,6 +14,13 @@ public class RabbitMqConfig {
          @Value("${rabbitmq.register-queue}")
         private String registerQueueName;
 
+    @Value("${rabbitmq.activation-queue}")
+    private String activationQueueName;
+    @Bean
+    Queue activationQueue(){
+        return  new Queue(activationQueueName);
+    }
+
          @Bean
          Queue registerQueue(){
             return  new Queue(registerQueueName);

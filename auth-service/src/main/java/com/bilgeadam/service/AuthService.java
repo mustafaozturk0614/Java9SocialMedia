@@ -9,6 +9,7 @@ import com.bilgeadam.excepiton.AuthManagerException;
 import com.bilgeadam.excepiton.ErrorType;
 import com.bilgeadam.manager.IUserManager;
 import com.bilgeadam.mapper.IAuthMapper;
+import com.bilgeadam.rabbitmq.producer.ActivationProducer;
 import com.bilgeadam.rabbitmq.producer.RegisterProducer;
 import com.bilgeadam.repository.IAuthRepository;
 import com.bilgeadam.repository.entity.Auth;
@@ -31,14 +32,16 @@ public class AuthService extends ServiceManager<Auth,Long> {
     private final IUserManager userManager;
 
     private final RegisterProducer registerProducer;
+    private final ActivationProducer activationProducer;
 
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userManager = userManager;
         this.registerProducer = registerProducer;
+        this.activationProducer = activationProducer;
     }
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto dto) {
@@ -122,7 +125,8 @@ public class AuthService extends ServiceManager<Auth,Long> {
             case PENDING,INACTIVE ->{
                 auth.setStatus(EStatus.ACTIVE);
                 update(auth);
-                userManager.activateUser(auth.getId());
+              //  userManager.activateUser(auth.getId());
+                activationProducer.activation(auth.getId());
                 return "Hesabınız aktif edilmiştir";
             }
             case BANNED -> {

@@ -27,8 +27,7 @@ jwt:
   issuer:  ${java9issuer}
   audience: ${java9audience}
 rabbitmq:
-  auth-exchange: authExchange
   register-queue: registerQueue
-  register-bindingKey: registerBindingKey
+  activation-queue: activationQueue
 
 
