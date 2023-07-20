@@ -16,7 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+/*
+    findbyUsername metodu yazalım kullanıcı ismine gore bir userprofile donsun
+    bu işlemi cahce kullanarak tasarlayalım
 
+
+ */
 @Service
 public class UserProfileService  extends ServiceManager<UserProfile,Long> {
 

@@ -34,6 +34,9 @@ rabbitmq:
   activation-queue: activationQueue
   mail-bindingKey: mailKey
   mail-queue: mailQueue
+redis:
+  host: localhost
+  port:  6379
 
 
 

@@ -10,6 +10,9 @@ import com.bilgeadam.repository.entity.Auth;
 import com.bilgeadam.service.AuthService;
 import com.bilgeadam.utility.JwtTokenManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class AuthController {
 
     private  final AuthService authService;
     private final JwtTokenManager jwtTokenManager;
+    private final CacheManager cacheManagernager;
 
     @PostMapping(REGISTER)
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto){
@@ -80,4 +84,33 @@ public class AuthController {
         return  ResponseEntity.ok(authService.findAll());
     }
 
+   @GetMapping("/redis")
+   @Cacheable(value = "redisexample")
+    public  String redisExample(String value){
+        try {
+            Thread.sleep(2000);
+            return value;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @GetMapping("/redisdelete")
+    @CacheEvict(cacheNames = "redisexample",allEntries = true)
+    public void redisDelete(){
+    }
+    @GetMapping("/redisdelete2")
+    public boolean redisDelete2(){
+
+        try {
+          //  cacheManagernager.getCache("redisexample").clear();// aynı isimle cahce lenmis butun veriyi siler
+           cacheManagernager.getCache("redisexample").evict("mustafa");
+            return  true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+    }
 }
