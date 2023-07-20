@@ -14,6 +14,7 @@ public class EndPoints {
 
     // USER
     public static final String ACTIVATION="/activation";
+    public static final String FINDBYSTATUS = "/findbystatus";
 
 
 }

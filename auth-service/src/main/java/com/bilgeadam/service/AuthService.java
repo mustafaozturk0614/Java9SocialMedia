@@ -18,6 +18,7 @@ import com.bilgeadam.repository.enums.EStatus;
 import com.bilgeadam.utility.CodeGenerator;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
+import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +36,10 @@ public class AuthService extends ServiceManager<Auth,Long> {
     private final RegisterProducer registerProducer;
     private final ActivationProducer activationProducer;
     private final MailProducer mailProducer;
+    private final CacheManager cacheManager;
 
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer, MailProducer mailProducer) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer, MailProducer mailProducer, CacheManager cacheManager) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
@@ -45,6 +47,7 @@ public class AuthService extends ServiceManager<Auth,Long> {
         this.registerProducer = registerProducer;
         this.activationProducer = activationProducer;
         this.mailProducer = mailProducer;
+        this.cacheManager = cacheManager;
     }
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto dto) {
@@ -75,14 +78,23 @@ public class AuthService extends ServiceManager<Auth,Long> {
         try {
             save(auth);
             // rabbit mq uzrerinden veri aktarcagız
+        cacheManager.getCache("findByStatus2").evict(auth.getStatus());
+           cacheManager.getCache("findByStatus").evict(auth.getStatus());
+            try {
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
             mailProducer.sendMail(IAuthMapper.INSTANCE.toMailModel(auth));
             registerProducer.sendNewUser(IAuthMapper.INSTANCE.toRegisterModel(auth));
+
             return  IAuthMapper.INSTANCE.toRegisterResponseDto(auth);
         } catch (DataIntegrityViolationException e){
             throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
         }catch (Exception ex){
             //   delete(auth);
+            ex.printStackTrace();
             throw  new AuthManagerException(ErrorType.USER_NOT_CREATED);
         }
     }

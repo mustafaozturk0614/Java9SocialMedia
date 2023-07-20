@@ -12,10 +12,14 @@ import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
 import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 /*
     findbyUsername metodu yazalım kullanıcı ismine gore bir userprofile donsun
@@ -30,17 +34,21 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
     private  final JwtTokenManager jwtTokenManager;
 
     private final IAuthManager authManager;
+    private final CacheManager cacheManager;
 
-    public UserProfileService(IUserProfileRepository userProfileRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager) {
+    public UserProfileService(IUserProfileRepository userProfileRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager, CacheManager cacheManager) {
         super(userProfileRepository);
         this.userProfileRepository = userProfileRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
+        this.cacheManager = cacheManager;
     }
 
     public  Boolean createNewUser(UserSaveRequestDto dto){
         try {
-              save(IUserMapper.INSTANCE.toUserProfile(dto));
+            UserProfile userProfile=IUserMapper.INSTANCE.toUserProfile(dto);
+              save(userProfile);
+
             return true;
         }catch (Exception e){
             throw new UserManagerException(ErrorType.USER_NOT_CREATED);
@@ -53,8 +61,12 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
         if (userProfile.isEmpty()){
             throw  new UserManagerException(ErrorType.USER_NOT_FOUND);
         }
+        cacheManager.getCache("findByStatus").evict(userProfile.get().getStatus());
+        cacheManager.getCache("findByStatus2").evict(userProfile.get().getStatus());
         userProfile.get().setStatus(EStatus.ACTIVE);
         update(userProfile.get());
+        cacheManager.getCache("findByStatus").evict(userProfile.get().getStatus());
+        cacheManager.getCache("findByStatus2").evict(userProfile.get().getStatus());
         return  "Hesap başarıyla aktive edilmiştir";
     }
 
@@ -106,5 +118,41 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
             throw new UserManagerException(ErrorType.USER_NOT_FOUND);
         }
         return userProfile.get();
+    }
+    /**
+     * FındByStatus
+     */
+    @Cacheable(value = "findByStatus")
+    public List<UserProfile> findByStatus(EStatus status){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        List<UserProfile> list=userProfileRepository.findByStatus(status);
+       if(list.isEmpty()){
+            throw new RuntimeException("Herhangi bir veri bulanumadı");
+        }
+        return list;
+    }
+    @Cacheable(value = "findByStatus2",key = "#status.toUpperCase()")
+    public List<UserProfile> findByStatus(String status){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        List<UserProfile> list=new ArrayList<>();
+        try {
+            list =userProfileRepository.findByStatus(EStatus.valueOf(status.toUpperCase(Locale.ENGLISH)));
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UserManagerException(ErrorType.STATUS_NOT_FOUND);
+        }
+
+        if(list.isEmpty()){
+            throw new RuntimeException("Herhangi bir veri bulanumadı");
+        }
+        return list;
     }
 }

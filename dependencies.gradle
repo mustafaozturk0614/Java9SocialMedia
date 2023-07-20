@@ -18,6 +18,7 @@ ext{
         springBootRabbitMq:"org.springframework.boot:spring-boot-starter-amqp:$versions.springBoot",
         springBootMailSender: "org.springframework.boot:spring-boot-starter-mail:$versions.springBoot",
         springBootDataRedis: "org.springframework.boot:spring-boot-starter-data-redis:$versions.springBoot",
+        springBootElasticSearch: "org.springframework.boot:spring-boot-starter-data-elasticsearch:$versions.springBoot",
         postgresql: "org.postgresql:postgresql:$versions.postgresql",
         mapStruct: "org.mapstruct:mapstruct:$versions.mapStruct",
         mapStructProcessor: "org.mapstruct:mapstruct-processor:$versions.mapStruct",
