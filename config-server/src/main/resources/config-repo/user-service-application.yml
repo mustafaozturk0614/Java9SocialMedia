@@ -29,5 +29,7 @@ jwt:
 rabbitmq:
   register-queue: registerQueue
   activation-queue: activationQueue
-
+redis:
+  host: localhost
+  port:  6379
 

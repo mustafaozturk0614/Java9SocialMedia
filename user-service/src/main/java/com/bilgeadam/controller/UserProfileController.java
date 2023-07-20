@@ -57,4 +57,9 @@ public class UserProfileController {
         return ResponseEntity.ok(userProfileService.findAll());
     }
 
+    @PostMapping(FINDBYUSERNAME)                    //PathVariable
+    public ResponseEntity<UserProfile> findByUsername(@RequestParam String username){
+        return ResponseEntity.ok(userProfileService.findByUsername(username));
+    }
+
 }

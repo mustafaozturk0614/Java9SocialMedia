@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface IUserProfileRepository  extends JpaRepository<UserProfile,Long> {
 
     Optional<UserProfile> findByAuthId(Long authId);
+    Optional<UserProfile> findByUsername(String username);
 }

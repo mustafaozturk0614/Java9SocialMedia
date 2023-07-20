@@ -10,6 +10,7 @@ public class EndPoints {
 
     public static final String SAVE="/save";
     public static final String UPDATE="/update";
+    public static final String FINDBYUSERNAME="/findbyusername";
 
     // USER
     public static final String ACTIVATION="/activation";
