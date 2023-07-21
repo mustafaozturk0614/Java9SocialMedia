@@ -2,10 +2,11 @@ package com.bilgeadam.controller;
 
 import com.bilgeadam.dto.request.UserProfileUpdateRequestDto;
 import com.bilgeadam.dto.request.UserSaveRequestDto;
+import com.bilgeadam.dto.response.UserProfileResponseDto;
+import com.bilgeadam.mapper.IUserMapper;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
 import com.bilgeadam.service.UserProfileService;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import  static  com.bilgeadam.constant.EndPoints.*;
 
@@ -69,5 +71,13 @@ public class UserProfileController {
     @GetMapping(FINDBYSTATUS+"2")                    //PathVariable
     public ResponseEntity<List<UserProfile>> findByStatus(@RequestParam String status){
         return ResponseEntity.ok(userProfileService.findByStatus(status));
+    }
+
+    @GetMapping(FINDALL+"forelastic")
+    public ResponseEntity<List<UserProfileResponseDto>> findAllForElasticService(){
+  List<UserProfileResponseDto>  list=userProfileService.findAll().stream()
+                .map(x-> IUserMapper.INSTANCE.toUserProfileResponseDto(x)).collect(Collectors.toList());
+
+  return ResponseEntity.ok(list);
     }
 }
