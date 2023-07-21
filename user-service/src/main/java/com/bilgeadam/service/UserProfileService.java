@@ -7,6 +7,7 @@ import com.bilgeadam.excepiton.UserManagerException;
 import com.bilgeadam.manager.IAuthManager;
 import com.bilgeadam.mapper.IUserMapper;
 import com.bilgeadam.rabbitmq.model.RegisterModel;
+import com.bilgeadam.rabbitmq.producer.RegisterElasticProducer;
 import com.bilgeadam.repository.IUserProfileRepository;
 import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
@@ -36,12 +37,15 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
     private final IAuthManager authManager;
     private final CacheManager cacheManager;
 
-    public UserProfileService(IUserProfileRepository userProfileRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager, CacheManager cacheManager) {
+    private final RegisterElasticProducer registerElasticProducer;
+
+    public UserProfileService(IUserProfileRepository userProfileRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager, CacheManager cacheManager, RegisterElasticProducer registerElasticProducer) {
         super(userProfileRepository);
         this.userProfileRepository = userProfileRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
         this.cacheManager = cacheManager;
+        this.registerElasticProducer = registerElasticProducer;
     }
 
     public  Boolean createNewUser(UserSaveRequestDto dto){
@@ -99,7 +103,9 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
 
     public Boolean createNewUserWithRabbitmq(RegisterModel registerModel) {
         try {
-            save(IUserMapper.INSTANCE.toUserProfile(registerModel));
+            UserProfile userProfile=IUserMapper.INSTANCE.toUserProfile(registerModel);
+            save(userProfile);
+            registerElasticProducer.sendNewUser(IUserMapper.INSTANCE.toRegisterElasticModel(userProfile));
             return  true;
         }catch (Exception e){
             throw  new UserManagerException(ErrorType.USER_NOT_CREATED);

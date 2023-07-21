@@ -29,6 +29,10 @@ jwt:
 rabbitmq:
   register-queue: registerQueue
   activation-queue: activationQueue
+  register-elastic-queue: registerElasticQueue
+  register-elastic-binding: registerElasticBindingKey
+  user-exchange: exchangeUser
+
 redis:
   host: localhost
   port:  6379

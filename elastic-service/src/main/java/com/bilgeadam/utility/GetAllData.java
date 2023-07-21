@@ -20,7 +20,8 @@ public class GetAllData {
     private final UserProfileService userProfileService;
 
     private final IUserManager userManager;
-    @PostConstruct
+
+  //  @PostConstruct
     public void initData(){
     List<UserProfileResponseDto>list=userManager.findAllForElasticService().getBody();
         userProfileService.saveAll(IUserMapper.INSTANCE.toUserProfiles(list));
