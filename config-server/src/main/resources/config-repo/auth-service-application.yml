@@ -22,6 +22,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
+
+
+
 jwt:
   secretKey: ${java9secretkey}
   issuer:  ${java9issuer}
@@ -38,7 +41,13 @@ redis:
   host: localhost
   port:  6379
 
-
-
+logging:
+  level:
+    root: info
+  file:
+    name: auth.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
 
 

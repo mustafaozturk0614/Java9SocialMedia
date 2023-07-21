@@ -8,6 +8,8 @@ import com.bilgeadam.repository.entity.UserProfile;
 import com.bilgeadam.repository.enums.EStatus;
 import com.bilgeadam.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +81,17 @@ public class UserProfileController {
                 .map(x-> IUserMapper.INSTANCE.toUserProfileResponseDto(x)).collect(Collectors.toList());
 
   return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/findallbypageable")
+    public ResponseEntity<Page<UserProfile>> findAllByPageable(int pageSize,int pageNumber,@RequestParam(required = false,defaultValue = "ASC") String direction,@RequestParam(required = false,defaultValue = "id") String sortParameter){
+
+        return  ResponseEntity.ok(userProfileService.findAllByPageable(pageSize,pageNumber,direction,sortParameter));
+    }
+
+    @GetMapping("/findallbyslice")
+    public ResponseEntity<Slice<UserProfile>> findAllBySlice(int pageSize, int pageNumber, @RequestParam(required = false,defaultValue = "ASC") String direction, @RequestParam(required = false,defaultValue = "id") String sortParameter){
+
+        return  ResponseEntity.ok(userProfileService.findAllBySlice(pageSize,pageNumber,direction,sortParameter));
     }
 }

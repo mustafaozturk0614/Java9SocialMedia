@@ -15,3 +15,13 @@ spring:
       name: elastic-service
 rabbitmq:
   register-elastic-queue: registerElasticQueue
+
+
+logging:
+  level:
+    root: info
+  file:
+    name: elastic.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB

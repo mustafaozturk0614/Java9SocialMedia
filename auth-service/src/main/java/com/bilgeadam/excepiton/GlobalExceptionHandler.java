@@ -1,6 +1,7 @@
 package com.bilgeadam.excepiton;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 
 //@ControllerAdvice
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex){
@@ -42,7 +44,8 @@ public class GlobalExceptionHandler {
     }
 
     private  ErrorMessage createError(ErrorType errorType,Exception ex){
-        System.out.println("Hata olustu: "+ex.getMessage());
+        //System.out.println("Hata olustu: "+ex.getMessage());
+        log.error("Hata olustu: "+ex.getMessage());
         return ErrorMessage.builder()
                 .code(errorType.getCode())
                 .message(errorType.getMessage())
