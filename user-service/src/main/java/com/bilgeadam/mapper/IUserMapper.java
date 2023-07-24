@@ -27,12 +27,12 @@ public interface IUserMapper {
     @Mapping(source = "authId" ,target = "id")
     UpdateRequestDto toUpdateRequestDto(final UserProfile userProfile);
 
-    @Mapping(source = "id",target = "userProfileId")
+   // @Mapping(source = "id",target = "userProfileId")
     UserProfileResponseDto toUserProfileResponseDto(UserProfile userProfile);
 
     UserProfile toUserProfile(RegisterElasticModel model);
 
-    @Mapping(source = "id",target = "userProfileId")
+   // @Mapping(source = "id",target = "userProfileId")
     RegisterElasticModel toRegisterElasticModel(UserProfile userProfile);
 
 }

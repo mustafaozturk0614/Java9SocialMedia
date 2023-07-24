@@ -30,7 +30,7 @@ import java.util.Optional;
 
  */
 @Service
-public class UserProfileService  extends ServiceManager<UserProfile,Long> {
+public class UserProfileService  extends ServiceManager<UserProfile,String> {
 
     private final IUserProfileRepository userProfileRepository;
     private  final JwtTokenManager jwtTokenManager;
@@ -106,9 +106,10 @@ public class UserProfileService  extends ServiceManager<UserProfile,Long> {
         try {
             UserProfile userProfile=IUserMapper.INSTANCE.toUserProfile(registerModel);
             save(userProfile);
-            registerElasticProducer.sendNewUser(IUserMapper.INSTANCE.toRegisterElasticModel(userProfile));
+           registerElasticProducer.sendNewUser(IUserMapper.INSTANCE.toRegisterElasticModel(userProfile));
             return  true;
         }catch (Exception e){
+            e.printStackTrace();
             throw  new UserManagerException(ErrorType.USER_NOT_CREATED);
         }
     }

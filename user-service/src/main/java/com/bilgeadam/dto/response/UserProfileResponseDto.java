@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserProfileResponseDto {
 
 
-    private Long userProfileId;
+    private String id;
     private Long authId;
     private String username;
     private String email;

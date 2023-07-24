@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 public class RegisterElasticModel implements Serializable {
 
-    private Long userProfileId;
+    private String id;
     private Long authId;
     private String username;
     private String email;
