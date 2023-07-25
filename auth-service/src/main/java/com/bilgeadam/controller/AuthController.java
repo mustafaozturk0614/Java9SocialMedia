@@ -14,6 +14,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -79,6 +80,7 @@ public class AuthController {
     }
 
     @GetMapping(FINDALL)
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')" )
     public ResponseEntity<List<Auth>> findAll(){
 
         return  ResponseEntity.ok(authService.findAll());

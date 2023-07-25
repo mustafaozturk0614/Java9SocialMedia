@@ -176,4 +176,23 @@ public class UserProfileService  extends ServiceManager<UserProfile,String> {
         Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
         return userProfileRepository.findAll(pageable);
     }
+
+    public Optional<UserProfile> getUser(String username){
+        return userProfileRepository.getUser(username);
+    }
+
+   public List<UserProfile> findAllActiveProfile(){
+
+        return userProfileRepository.findAllActiveProfile();
+    }
+
+    public     List<UserProfile> findUserGtId(Long authId){
+
+        return userProfileRepository.findUserGtId(authId);
+    }
+
+    public List<UserProfile> findUserGtIdAndStatus(Long authId,EStatus status){
+
+        return userProfileRepository.findUserGtIdAndStatus(authId,status);
+    }
 }

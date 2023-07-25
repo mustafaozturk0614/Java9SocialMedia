@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import  static  com.bilgeadam.constant.EndPoints.*;
@@ -93,5 +94,28 @@ public class UserProfileController {
     public ResponseEntity<Slice<UserProfile>> findAllBySlice(int pageSize, int pageNumber, @RequestParam(required = false,defaultValue = "ASC") String direction, @RequestParam(required = false,defaultValue = "id") String sortParameter){
 
         return  ResponseEntity.ok(userProfileService.findAllBySlice(pageSize,pageNumber,direction,sortParameter));
+    }
+
+    @GetMapping ("/getuser")
+    public  ResponseEntity<Optional<UserProfile>> getUser(String username){
+
+        return  ResponseEntity.ok(userProfileService.getUser(username));
+    }
+
+    @GetMapping ("/finallactiveprofile")
+    public  ResponseEntity<List<UserProfile>> findAllActiveProfile(){
+
+        return  ResponseEntity.ok(userProfileService.findAllActiveProfile());
+    }
+
+    @GetMapping ("/findUserGtId")
+    public  ResponseEntity<List<UserProfile>> findUserGtId(Long authId){
+
+        return  ResponseEntity.ok(userProfileService.findUserGtId(authId));
+    }
+    @GetMapping("/findUserGtIdAndStatus")
+    public ResponseEntity< List<UserProfile>> findUserGtIdAndStatus(Long authId,EStatus status){
+
+        return ResponseEntity.ok(userProfileService.findUserGtIdAndStatus(authId,status));
     }
 }

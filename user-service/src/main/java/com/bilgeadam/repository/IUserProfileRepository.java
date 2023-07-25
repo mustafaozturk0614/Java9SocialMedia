@@ -16,4 +16,15 @@ public interface IUserProfileRepository  extends MongoRepository<UserProfile,Str
     Optional<UserProfile> findByAuthId(Long authId);
     Optional<UserProfile> findByUsername(String username);
     List<UserProfile> findByStatus(EStatus status);
+    @Query("{'username' : ?0 }")
+    Optional<UserProfile> getUser(String username);
+
+    @Query("{status: 'ACTIVE'}")
+    List<UserProfile> findAllActiveProfile();
+
+    @Query(" {authId: {$gt: ?0}}")
+    List<UserProfile> findUserGtId(Long authId);
+    @Query("{ $or:[{authId: {$gt: ?0}},{status: ?1}]} ")
+    List<UserProfile> findUserGtIdAndStatus(Long authId,EStatus status);
+
 }
