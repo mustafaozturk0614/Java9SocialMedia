@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -59,6 +60,7 @@ public class UserProfileController {
 
 
     @GetMapping(FINDALL)
+
     public ResponseEntity<List<UserProfile>> findAll(){
         return ResponseEntity.ok(userProfileService.findAll());
     }
@@ -67,7 +69,8 @@ public class UserProfileController {
     public ResponseEntity<UserProfile> findByUsername(@RequestParam String username){
         return ResponseEntity.ok(userProfileService.findByUsername(username));
     }
-    @GetMapping(FINDBYSTATUS)                    //PathVariable
+    @GetMapping(FINDBYSTATUS)
+    @PreAuthorize("hasAuthority('USER')")//PathVariable
     public ResponseEntity<List<UserProfile>> findByStatus(@RequestParam EStatus status){
         return ResponseEntity.ok(userProfileService.findByStatus(status));
     }
@@ -85,6 +88,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/findallbypageable")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Page<UserProfile>> findAllByPageable(int pageSize,int pageNumber,@RequestParam(required = false,defaultValue = "ASC") String direction,@RequestParam(required = false,defaultValue = "id") String sortParameter){
 
         return  ResponseEntity.ok(userProfileService.findAllByPageable(pageSize,pageNumber,direction,sortParameter));

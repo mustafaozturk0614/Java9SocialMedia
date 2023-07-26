@@ -1,12 +1,11 @@
 package com.bilgeadam.config.security;
 
 import com.bilgeadam.utility.JwtTokenManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 
+@Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -24,7 +24,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUserDetails jwtUserDetails;
 
-     //private static  Long userId;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,10 +34,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         ){
             String token=authorizationHeader.substring(7);
-            Optional<Long> id=jwtTokenManager.getIdFromToken(token);
+            Optional<String> role=jwtTokenManager.getRoleFromToken(token);
             UserDetails userDetails=null;
-                if (id.isPresent()){
-                  userDetails=   jwtUserDetails.loadUserById(id.get());
+                if (role.isPresent()){
+                  userDetails= jwtUserDetails.loadUserByRole(role.get());
 
                     UsernamePasswordAuthenticationToken authenticationToken=
                     new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());

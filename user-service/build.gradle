@@ -10,4 +10,5 @@ dependencies {
 //    implementation libs.springBootJpa
     implementation libs.springBootDataMongo
     implementation libs.springCloudConfigClient
+    implementation libs.springBootSecurity
 }
