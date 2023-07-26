@@ -20,6 +20,7 @@ import com.bilgeadam.utility.JwtTokenManager;
 import com.bilgeadam.utility.ServiceManager;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +39,10 @@ public class AuthService extends ServiceManager<Auth,Long> {
     private final MailProducer mailProducer;
     private final CacheManager cacheManager;
 
+    private  final PasswordEncoder passwordEncoder;
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer, MailProducer mailProducer, CacheManager cacheManager) {
+
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, IUserManager userManager, RegisterProducer registerProducer, ActivationProducer activationProducer, MailProducer mailProducer, CacheManager cacheManager, PasswordEncoder passwordEncoder) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
@@ -48,10 +51,18 @@ public class AuthService extends ServiceManager<Auth,Long> {
         this.activationProducer = activationProducer;
         this.mailProducer = mailProducer;
         this.cacheManager = cacheManager;
+        this.passwordEncoder = passwordEncoder;
     }
     @Transactional
     public RegisterResponseDto register(RegisterRequestDto dto) {
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        System.out.println(passwordEncoder.encode(dto.getPassword()));
+        System.out.println(passwordEncoder.encode(dto.getPassword()));
+
+
         Auth auth= IAuthMapper.INSTANCE.toAuth(dto);
+
         auth.setActivationCode(CodeGenerator.genarateCode());
 //    if (authRepository.existsByUsername(dto.getUsername())){
 //        throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
@@ -60,7 +71,9 @@ public class AuthService extends ServiceManager<Auth,Long> {
             save(auth);
         //TODO bir manager paketi içinde bir interface e metot yazılacak
             // ve yazılan metot uzerinden user servie ile iteşime geçilecek
-            userManager.createNewUser(IAuthMapper.INSTANCE.toUserSaveRequestDto(auth));
+
+            String token="Bearer "+jwtTokenManager.createToken(auth.getId(),auth.getRole()).get();
+            userManager.createNewUser(IAuthMapper.INSTANCE.toUserSaveRequestDto(auth),token);
             return  IAuthMapper.INSTANCE.toRegisterResponseDto(auth);
         } catch (DataIntegrityViolationException e){
             throw  new AuthManagerException(ErrorType.USERNAME_EXIST);
@@ -72,6 +85,7 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
 
     public RegisterResponseDto registerWithRabbitmq(RegisterRequestDto dto) {
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         Auth auth= IAuthMapper.INSTANCE.toAuth(dto);
         auth.setActivationCode(CodeGenerator.genarateCode());
 
@@ -106,8 +120,9 @@ public class AuthService extends ServiceManager<Auth,Long> {
 
 
     public String login(LoginRequestDto dto) {
-        Optional<Auth> auth=authRepository.findOptionalByUsernameAndPassword(dto.getUsername(), dto.getPassword());
-        if (auth.isEmpty()){
+
+        Optional<Auth> auth=authRepository.findOptionalByUsername(dto.getUsername());
+        if (auth.isEmpty()|| !passwordEncoder.matches(dto.getPassword(),auth.get().getPassword())){
             throw  new AuthManagerException(ErrorType.LOGIN_ERROR);
         }
         if(!auth.get().getStatus().equals(EStatus.ACTIVE)){

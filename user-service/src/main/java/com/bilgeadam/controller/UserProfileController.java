@@ -39,7 +39,7 @@ public class UserProfileController {
     private final UserProfileService userProfileService;
 
     @PostMapping(SAVE)
-    public ResponseEntity<Boolean> createNewUser(@RequestBody UserSaveRequestDto dto){
+    public ResponseEntity<Boolean> createNewUser(@RequestBody UserSaveRequestDto dto,@RequestHeader("Authorization") String token){
 
         return  ResponseEntity.ok(userProfileService.createNewUser(dto));
     }
@@ -65,8 +65,10 @@ public class UserProfileController {
         return ResponseEntity.ok(userProfileService.findAll());
     }
 
-    @PostMapping(FINDBYUSERNAME)                    //PathVariable
+    @PostMapping(FINDBYUSERNAME)
+    //PathVariable
     public ResponseEntity<UserProfile> findByUsername(@RequestParam String username){
+
         return ResponseEntity.ok(userProfileService.findByUsername(username));
     }
     @GetMapping(FINDBYSTATUS)
