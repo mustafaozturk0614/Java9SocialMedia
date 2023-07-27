@@ -74,7 +74,8 @@ public class AuthController {
         return  ResponseEntity.ok(jwtTokenManager.getRoleFromToken(token).get());
     }
     @PutMapping(UPDATE)
-    public  ResponseEntity<String> update(@RequestBody UpdateRequestDto dto){
+    public  ResponseEntity<String> update(@RequestBody UpdateRequestDto dto
+            ,@RequestHeader("Authorization") String token){
 
         return  ResponseEntity.ok(authService.updateAuth(dto));
     }

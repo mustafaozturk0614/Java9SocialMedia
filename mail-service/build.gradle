@@ -7,4 +7,5 @@ buildscript {
 
 dependencies {
  implementation libs.springBootMailSender
+    implementation libs.springCloudConfigClient
 }
