@@ -4,6 +4,7 @@ package com.bilgeadam.mapper;
 
 import com.bilgeadam.dto.response.UserProfileResponseDto;
 
+import com.bilgeadam.graphql.model.UserProfileInput;
 import com.bilgeadam.rabbitmq.model.RegisterElasticModel;
 import com.bilgeadam.repository.entity.UserProfile;
 import org.mapstruct.Mapper;
@@ -22,5 +23,7 @@ public interface IUserMapper {
     List<UserProfile> toUserProfiles(List<UserProfileResponseDto> userProfileResponseDtos);
 
     UserProfile toUserProfile(RegisterElasticModel model);
+
+    UserProfile toUserProfile(UserProfileInput userProfileInput);
 
 }

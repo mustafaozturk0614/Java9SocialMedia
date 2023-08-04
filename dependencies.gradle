@@ -8,6 +8,8 @@ ext{
             jwt: "4.4.0",
             springCloud: "3.1.8",
             circuirBreaker: "2.1.7",
+            graphql                  : "13.0.0",
+            graphiql                 : "11.1.0",
 
     ]
 
@@ -36,6 +38,10 @@ ext{
         springCloudCircuitReactor: "org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j:$versions.circuirBreaker",
         springCloudZipkin: "org.springframework.cloud:spring-cloud-sleuth-zipkin:$versions.springCloud",
         springCloudSleuth: "org.springframework.cloud:spring-cloud-starter-sleuth:$versions.springCloud",
+        graphqlStarter: "com.graphql-java-kickstart:graphql-spring-boot-starter:$versions.graphql",
+        graphqlJavaTols:"com.graphql-java-kickstart:graphql-java-tools:$versions.graphql",
+        graphiql:"com.graphql-java-kickstart:graphiql-spring-boot-starter:$versions.graphiql"
+
 
 
     ]
